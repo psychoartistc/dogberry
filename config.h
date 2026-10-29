@@ -8,4 +8,6 @@
 #define BORDER_COLOR_ACTIVE 0xff333388
 #define BORDER_WIDTH_PX 1
 
+static const char* terminal_command[] = {"foot", NULL};
+
 #endif
