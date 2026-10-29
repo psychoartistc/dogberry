@@ -12,7 +12,7 @@ struct screen {
 };
 
 struct window {
-	struct swc_window* swc;
+	struct swc_window* handle;
 	struct screen* screen;
 	struct wl_list link;
 };
