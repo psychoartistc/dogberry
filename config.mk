@@ -10,7 +10,7 @@ CFLAGS := -O2 -Wextra $(PKG_CFLAGS)
 LDFLAGS := $(PKG_LDFLAGS)
 
 TARGET := dogberry
-SRCS := main.c
+SRCS := main.c wm.c
 OBJS := $(SRCS:.c=.o)
 
 .PHONY: all clean

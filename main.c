@@ -1,6 +1,11 @@
 #include "types.h"
 #include "wm.h"
 
+#include <stdio.h>
+
+#define _POSIX_C_SOURCE 200112L
+#include <stdlib.h>
+
 static const struct swc_manager manager = {};
 
 int main(char** argv, int argc) {

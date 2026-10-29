@@ -5,4 +5,4 @@
 #include <wayland-util.h>
 #include <xkbcommon/xkbcommon-keysyms.h>
 
-
+struct wm wm = {};
