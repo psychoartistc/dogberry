@@ -1,7 +1,7 @@
 CC := c99
 PKG_CONFIG := pkgconf
 
-PKGS := swc wayland-server
+PKGS := swc wayland-server xkbcommon
 
 PKG_CFLAGS  := $(shell $(PKG_CONFIG) --cflags $(PKGS))
 PKG_LDFLAGS := $(shell $(PKG_CONFIG) --libs $(PKGS))
