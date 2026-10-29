@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <unistd.h>
 
-#define _POSIX_C_SOURCE 200112L
 #include <stdlib.h>
 #include "config.h"
 #include "screen.h"
