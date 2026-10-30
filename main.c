@@ -6,7 +6,66 @@
 #define _POSIX_C_SOURCE 200112L
 #include <stdlib.h>
 
-static const struct swc_manager manager = {};
+void new_screen(struct swc_screen* scr) {
+	printf("new screen!\n");
+}
+
+void new_window(struct swc_window* win) {
+	printf("new window!\n");
+}
+
+void new_device(struct libinput_device* dev) {
+	printf("new device!\n");
+}
+
+void die() {
+	/* this is usually called under bad circumstances */
+	/* nevertheless cleanup must be done */
+
+	fprintf(stderr, "die()\n");
+	wl_display_destroy(wm.display);
+	exit(-1);
+}
+
+void on_screen_destroy(void* data) {
+	struct screen* s = (struct screen*)data;
+
+	if(!s) {
+		fprintf(stderr, "[-] on_screen_destroy bad arg\n");
+		die();
+	}
+
+	if(wm.sel_screen == s) {
+		if(wl_list_empty(&wm.screens))
+			wm.sel_screen = NULL;
+		else 
+			wm.sel_screen = wl_container_of(wm.screens.next, wm.sel_screen, link);
+	}
+
+	free(s);
+}
+
+static void on_new_screen(struct swc_screen* handle) {
+	struct screen* s = malloc(sizeof(struct screen));
+	if(!s) {
+		fprintf(stderr, "[-] no memory\n");
+		die();
+	}
+
+	s->scr = handle;
+	s->x = 0;
+	s->y = 0;
+	s->w = 0;
+	s->h = 0;
+
+	wl_list_insert(&wm.screens, &s->link);
+
+	/* set the new screen as the selected one */
+	if(!wm.sel_screen)
+		wm.sel_screen = s;
+
+	swc_screen_set_handler(handle, &screen_handler, s);
+}
 
 int main(char** argv, int argc) {
 	wm.display = wl_display_create();
@@ -14,6 +73,7 @@ int main(char** argv, int argc) {
 		fprintf(stderr, "[-] wl_display_create failed! are you running something exotic?\n");
 		return -1;
 	}
+	printf("wl_display_create done\n");
 
 	wl_list_init(&wm.screens);
 	wl_list_init(&wm.clients);
@@ -24,6 +84,7 @@ int main(char** argv, int argc) {
 	wm.grab.resize = false;
 	wm.grab.c = NULL;
 	wm.ws = 1;
+	printf("wl_display_get_event_loop doing\n");
 	
 	wm.ev_loop = wl_display_get_event_loop(wm.display);
 	if(!swc_initialize(wm.display, wm.ev_loop, &manager)) {
@@ -31,6 +92,7 @@ int main(char** argv, int argc) {
 		wl_display_destroy(wm.display);
 		return -1;
 	}
+	printf("wl_display_get_event_loop done\n");
 
 	const char* sock = wl_display_add_socket_auto(wm.display);
 	if(!sock) { 
@@ -39,7 +101,15 @@ int main(char** argv, int argc) {
 		return -1;
 	}
 
+	printf("wl_display_add_socket_auto done\n");
+
 	setenv("WAYLAND_DISPLAY", sock, 1);
 
 	printf("[+] initialized");
+
+	wl_display_run(wm.display);
+	swc_finalize();
+
+	wl_display_destroy(wm.display);
+	return -1;
 }

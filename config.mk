@@ -1,4 +1,6 @@
 CC := c99
+LD := c99
+
 PKG_CONFIG := pkgconf
 
 PKGS := swc wayland-server xkbcommon
@@ -18,7 +20,7 @@ OBJS := $(SRCS:.c=.o)
 all: $(TARGET)
 
 $(TARGET): $(OBJS)
-	$(CC) $(OBJS) -o $@ $(LDFLAGS)
+	$(LD) $(OBJS) -o $@ $(LDFLAGS)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
